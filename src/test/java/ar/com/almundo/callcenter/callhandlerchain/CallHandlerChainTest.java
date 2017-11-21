@@ -36,4 +36,32 @@ public class CallHandlerChainTest extends TestCase {
 		Assert.assertEquals(1, directorCallHandler.getEmployees().size());
 		Assert.assertTrue(directorCallHandler.getEmployees().contains(new Director(1L, "Director1")));
 	}
+
+	public void testCreateNoneAvailable() {
+		final Long amountOperators = 2L;
+		final Long amountSupervisors = 1L;
+		final Long amountDirectors = 1L;
+
+		final OperatorCallHandler operatorCallHandler = CallHandlerFactory.getOperatorCallHandlerNoneAvailable(amountOperators, amountSupervisors, amountDirectors);
+		Assert.assertEquals(2, operatorCallHandler.getEmployees().size());
+		Assert.assertTrue(operatorCallHandler.getEmployees().contains(new Operator(1L, "Operator1")));
+		Assert.assertTrue(operatorCallHandler.getEmployees().contains(new Operator(2L, "Operator2")));
+		for (final Operator o : operatorCallHandler.getEmployees()) {
+			Assert.assertFalse(o.isAvailable());
+		}
+
+		final SupervisorCallHandler supervisorCallHandler = operatorCallHandler.getNextChain();
+		Assert.assertEquals(1, supervisorCallHandler.getEmployees().size());
+		Assert.assertTrue(supervisorCallHandler.getEmployees().contains(new Supervisor(1L, "Supervisor1")));
+		for (final Supervisor s : supervisorCallHandler.getEmployees()) {
+			Assert.assertFalse(s.isAvailable());
+		}
+
+		final DirectorCallHandler directorCallHandler = supervisorCallHandler.getNextChain();
+		Assert.assertEquals(1, directorCallHandler.getEmployees().size());
+		Assert.assertTrue(directorCallHandler.getEmployees().contains(new Director(1L, "Director1")));
+		for (final Director d : directorCallHandler.getEmployees()) {
+			Assert.assertFalse(d.isAvailable());
+		}
+	}
 }

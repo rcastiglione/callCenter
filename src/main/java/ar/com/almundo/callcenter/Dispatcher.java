@@ -9,6 +9,11 @@ import org.apache.log4j.Logger;
 import ar.com.almundo.callcenter.callhandlerchain.OperatorCallHandler;
 import ar.com.almundo.callcenter.model.Call;
 
+/**
+ * The {@code Dispatcher} class attends all the calls.
+ *
+ * @author ricardo
+ */
 public class Dispatcher {
 	private final static Logger logger = Logger.getLogger(Dispatcher.class);
 
@@ -29,8 +34,12 @@ public class Dispatcher {
 	}
 
 	public void shutdown() throws InterruptedException {
-		this.executor.shutdown();
-		this.executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-		logger.info("Finished all calls");
+		try {
+			this.executor.shutdown();
+			this.executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+			logger.info("Finished all calls");
+		} catch (final Exception e) {
+			logger.error("hola", e);
+		}
 	}
 }
